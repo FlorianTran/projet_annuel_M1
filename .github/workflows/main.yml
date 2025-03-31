@@ -1,4 +1,4 @@
-name: CI - Front (React Native) & Back (NestJS)
+name: CI - Front & Back
 
 on:
   push:
@@ -7,34 +7,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # --- Job pour le FRONT React Native ---
-  frontend-tests:
-    name: Frontend Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies (Front)
-        run: |
-          cd POCMobile
-          npm install
-      - name: Run tests (Front)
-        run: |
-          cd POCMobile
-          npm test
-
-  # --- Job pour le BACK NestJS ---
+  # ------------------------------------------------------------
+  # Job : Backend (NestJS)
+  # ------------------------------------------------------------
   backend-tests:
     name: Backend Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Setup Node
@@ -42,11 +22,42 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install dependencies (Back)
+      - name: Install dependencies (Backend)
         run: |
           cd pocbackend
           npm install
-      - name: Run tests (Back)
+
+      - name: Build (Backend)
         run: |
           cd pocbackend
+          npm run build
+
+      - name: Test (Backend)
+        run: |
+          cd pocbackend
+          npm run test
+
+  # ------------------------------------------------------------
+  # Job : Frontend (React Native)
+  # ------------------------------------------------------------
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies (Frontend)
+        run: |
+          cd POCMobile
+          npm install
+
+      - name: Test (Frontend)
+        run: |
+          cd POCMobile
           npm run test
