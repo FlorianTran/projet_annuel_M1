@@ -15,5 +15,5 @@ RUN npm run build
 # Exposer le port
 EXPOSE 3000
 
-# Démarrer l'application en mode production (assurez-vous que dist/main.js est généré)
+# Démarrer l'application en mode production
 CMD ["node", "dist/main.js"]
