@@ -1,0 +1,44 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./POCMobile
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    # En développement, vous pouvez monter le volume pour bénéficier du hot-reload
+    volumes:
+      - ./POCMobile:/usr/src/app
+
+  backend:
+    build:
+      context: ./pocbackend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=poctest
+    volumes:
+      - ./pocbackend:/usr/src/app
+
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=poctest
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
