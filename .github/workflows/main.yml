@@ -1,0 +1,52 @@
+name: CI - Front (React Native) & Back (NestJS)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # --- Job pour le FRONT React Native ---
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies (Front)
+        run: |
+          cd POCMobile
+          npm install
+      - name: Run tests (Front)
+        run: |
+          cd POCMobile
+          npm test
+
+  # --- Job pour le BACK NestJS ---
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies (Back)
+        run: |
+          cd pocbackend
+          npm install
+      - name: Run tests (Back)
+        run: |
+          cd pocbackend
+          npm run test
