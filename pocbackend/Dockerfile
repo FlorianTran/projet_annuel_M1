@@ -1,19 +1,18 @@
-FROM node:16
+FROM node:20
 
 WORKDIR /usr/src/app
 
-# Copier package.json et package-lock.json (ou yarn.lock)
+# Copier les fichiers nécessaires à l'installation
 COPY package*.json ./
 RUN npm install
 
-# Copier tout le code
+# Copier tout le projet Nest
 COPY . .
 
-# Compiler l'application
+# Compiler l'application NestJS
 RUN npm run build
 
-# Exposer le port
 EXPOSE 3000
 
-# Démarrer l'application en mode production
+# Démarrer l'application
 CMD ["node", "dist/main.js"]
