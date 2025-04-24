@@ -4,21 +4,35 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './user/entities/user.entity';
-import { UserModule } from './user/user.module'; // Correction : Import du module utilisateur
+import { UserModule } from './user/user.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres', // Vérifiez que vous utilisez le bon type de base de données
-      host: 'localhost', // Vérifiez que l'hôte est correct
-      port: 5432, // Assurez-vous que le port est correct (par défaut pour PostgreSQL : 5432)
-      username: 'root', // Vérifiez le nom d'utilisateur
-      password: 'root',
-      database: 'postgres', // Vérifiez le nom de la base de données
-      entities: [User], // Assurez-vous que l'entité User est bien importée
-      synchronize: true, // Peut être activé en développement
+    ConfigModule.forRoot({
+      isGlobal: true,
+      ignoreEnvFile: true, // on utilise docker-compose, pas de .env
     }),
-    UserModule, // Correction : Nom du module utilisateur
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const host = config.get('DATABASE_HOST');
+        console.log('> DATABASE_HOST (via ConfigService):', host);
+
+        return {
+          type: 'postgres',
+          host: host ?? 'localhost',
+          port: parseInt(config.get('DATABASE_PORT') ?? '5432', 10),
+          username: config.get('DATABASE_USER') ?? 'postgres',
+          password: config.get('DATABASE_PASSWORD') ?? 'postgres',
+          database: config.get('DATABASE_NAME') ?? 'poctest',
+          entities: [User],
+          synchronize: true,
+        };
+      },
+    }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -27,8 +41,8 @@ export class AppModule {
   constructor(private dataSource: DataSource) {}
 }
 
-//Cette page,est le module racine de votre application NestJS. 
-// Elle sert à configurer et organiser les différents modules, services, et contrôleurs de votre application. 
+//Cette page,est le module racine de votre application NestJS.
+// Elle sert à configurer et organiser les différents modules, services, et contrôleurs de votre application.
 // Voici ses principales fonctions :
 //Définir les modules importés :
 // Le module utilise TypeOrmModule pour se connecter à une base de données PostgreSQL.

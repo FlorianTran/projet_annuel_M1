@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+const crypto = require('crypto');
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
