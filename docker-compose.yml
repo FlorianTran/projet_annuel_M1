@@ -1,20 +1,26 @@
-version: '3'
+version: '3.8'
+
 services:
   frontend:
     build:
-      context: ./POCMobile
+      context: ./mobile_front
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "8081:8081"   # Metro Bundler
+      - "19000:19000" # Expo Go (Android)
+      - "19001:19001" # Expo Go (iOS)
+      - "19002:19002" # Expo Web
     depends_on:
       - backend
-    # En développement, vous pouvez monter le volume pour bénéficier du hot-reload
     volumes:
-      - ./POCMobile:/usr/src/app
+      - ./mobile_front:/usr/src/app
+    environment:
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+    command: npx expo start --tunnel
 
   backend:
     build:
-      context: ./pocbackend
+      context: ./mobile_backend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -25,16 +31,16 @@ services:
       - DATABASE_PORT=5432
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=postgres
-      - DATABASE_NAME=poctest
+      - DATABASE_NAME=dbpostgres
 
   db:
     image: postgres:13
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=poctest
+      - POSTGRES_DB=dbpostgres
     volumes:
       - pgdata:/var/lib/postgresql/data
 
