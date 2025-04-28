@@ -26,8 +26,6 @@ services:
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=postgres
       - DATABASE_NAME=poctest
-    volumes:
-      - ./pocbackend:/usr/src/app
 
   db:
     image: postgres:13
