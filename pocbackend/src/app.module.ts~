@@ -4,8 +4,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { User } from './user/entities/user.entity';
-import { Entrainement } from './entrainement/entities/entrainement.entity';
-import { Seance } from './seance/entities/seance.entity';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EntrainementModule } from './entrainement/entrainement.module';
@@ -31,7 +29,8 @@ import { SeanceModule } from './seance/seance.module';
           username: config.get('DATABASE_USER') ?? 'postgres',
           password: config.get('DATABASE_PASSWORD') ?? 'postgres',
           database: config.get('DATABASE_NAME') ?? 'poctest',
-          entities: [User, Entrainement, Seance],
+  entities: [User, Entrainement, Seance], // <-- ajoute Seance ici !!
+
           synchronize: true,
         };
       },
