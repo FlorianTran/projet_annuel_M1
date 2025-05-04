@@ -23,11 +23,20 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+  
+  app.enableCors({
+    origin: 'http://localhost:3000', // URL de votre frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   // Démarrage de l'application
   const port = process.env.PORT || 3000;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
 }
+<<<<<<< HEAD:pocbackend/src/main.ts
+=======
 
+>>>>>>> origin/main:mobile_backend/src/main.ts
 bootstrap();
