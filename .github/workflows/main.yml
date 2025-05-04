@@ -20,21 +20,21 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 22
 
       - name: Install dependencies (Backend)
         run: |
-          cd pocbackend
+          cd mobile_backend
           npm install
 
       - name: Build (Backend)
         run: |
-          cd pocbackend
+          cd mobile_backend
           npm run build
 
       - name: Test (Backend)
         run: |
-          cd pocbackend
+          cd mobile_backend
           npm run test
 
   # ------------------------------------------------------------
@@ -50,14 +50,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 22
 
       - name: Install dependencies (Frontend)
         run: |
-          cd POCMobile
+          cd mobile_front
           npm install
 
       - name: Test (Frontend)
         run: |
-          cd POCMobile
+          cd mobile_front
           npm run test
