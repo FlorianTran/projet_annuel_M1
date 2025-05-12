@@ -13,6 +13,7 @@ COPY . .
 RUN npm run build
 
 EXPOSE 3000
+EXPOSE 3030
 
 # Démarrer l'application
 CMD ["node", "dist/main.js"]

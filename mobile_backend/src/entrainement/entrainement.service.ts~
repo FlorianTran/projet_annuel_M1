@@ -1,0 +1,28 @@
+import { Injectable } from '@nestjs/common';
+import { CreateEntrainementDto } from './dto/create-entrainement.dto';
+import { UpdateEntrainementDto } from './dto/update-entrainement.dto';
+
+@Injectable()
+export class EntrainementService {
+  async create(createEntrainementDto: CreateEntrainementDto) {
+  const entrainement = this.entrainementRepository.create(createEntrainementDto);
+  return this.entrainementRepository.save(entrainement);
+}
+
+
+  findAll() {
+    return `This action returns all entrainement`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} entrainement`;
+  }
+
+  update(id: number, updateEntrainementDto: UpdateEntrainementDto) {
+    return `This action updates a #${id} entrainement`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} entrainement`;
+  }
+}
