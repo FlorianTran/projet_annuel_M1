@@ -35,8 +35,4 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
 }
-<<<<<<< HEAD:pocbackend/src/main.ts
-=======
-
->>>>>>> origin/main:mobile_backend/src/main.ts
 bootstrap();

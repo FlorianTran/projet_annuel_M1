@@ -10,6 +10,11 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EntrainementModule } from './entrainement/entrainement.module';
 import { SeanceModule } from './seance/seance.module';
+import { ChatroomModule } from './chatroom/chatroom.module';
+import { MessageModule } from './message/message.module';
+import { ChatModule } from './chat/chat.module';
+import { ChatRoom } from './chatroom/entities/chatroom.entity';
+import { Message } from './message/entities/message.entity';
 
 @Module({
   imports: [
@@ -31,7 +36,7 @@ import { SeanceModule } from './seance/seance.module';
           username: config.get('DATABASE_USER') ?? 'postgres',
           password: config.get('DATABASE_PASSWORD') ?? 'postgres',
           database: config.get('DATABASE_NAME') ?? 'poctest',
-          entities: [User, Entrainement, Seance],
+          entities: [User, Entrainement, Seance, ChatRoom, Message],          
           synchronize: true,
         };
       },
@@ -39,6 +44,9 @@ import { SeanceModule } from './seance/seance.module';
     UserModule,
     EntrainementModule,
     SeanceModule,
+    ChatroomModule,
+    MessageModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
