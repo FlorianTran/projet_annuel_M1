@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  OneToMany
+} from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { ChatRoom } from '../../chatroom/entities/chatroom.entity';
 
@@ -7,15 +14,20 @@ export class Message {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('text')
-  contenu: string;
+  @Column()
+  content: string;
+
+  @ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.messages, { eager: false, onDelete: 'CASCADE' })
+  chatRoom: ChatRoom;
 
   @CreateDateColumn()
-  dateEnvoi: Date;
+  createdAt: Date;
 
-  @ManyToOne(() => User)
-  expediteur: User;
+  @ManyToOne(() => User, user => user.messages)
+  user: User;
 
-  @ManyToOne(() => ChatRoom, chatRoom => chatRoom.messages)
-  chatRoom: ChatRoom;
+  @OneToMany(() => Message, message => message.user)
+  messages: Message[];
+
+
 }

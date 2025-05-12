@@ -7,13 +7,13 @@ async function bootstrap() {
 
   // Active CORS pour permettre les requêtes cross-origin
   app.enableCors({
-    origin: 'http://localhost:8081', // Remplacez par l'URL de votre frontend
-    credentials: true, // Autoriser les cookies et les en-têtes d'autorisation
-    exposedHeaders: ['Content-Type', 'Authorization'], // Exposer les en-têtes nécessaires
-    methods: 'GET, POST, PUT, DELETE', // Définir les méthodes autorisées
-    allowedHeaders: 'Content-Type, Authorization', // Définir les en-têtes autorisés
+    origin: ['http://localhost:8081'],
+    credentials: true,
+    exposedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
-
+  
   // Configuration de Swagger
   const config = new DocumentBuilder()
     .setTitle('API Utilisateurs')
@@ -23,12 +23,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  
-  app.enableCors({
-    origin: 'http://localhost:3000', // URL de votre frontend
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
 
   // Démarrage de l'application
   const port = process.env.PORT || 3000;

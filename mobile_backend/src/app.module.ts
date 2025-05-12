@@ -15,6 +15,8 @@ import { MessageModule } from './message/message.module';
 import { ChatModule } from './chat/chat.module';
 import { ChatRoom } from './chatroom/entities/chatroom.entity';
 import { Message } from './message/entities/message.entity';
+import { SocketGateway } from './socket/socket.gateway';
+
 
 @Module({
   imports: [
@@ -49,7 +51,8 @@ import { Message } from './message/entities/message.entity';
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SocketGateway],
+  
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import { User } from '../models/user';
+import { User } from '../../lib/models/user';
 
 export default function App() {
   const [users, setUsers] = useState<User[]>([]);

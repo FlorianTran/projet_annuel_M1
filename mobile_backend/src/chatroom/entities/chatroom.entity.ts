@@ -1,5 +1,12 @@
-// 1. chatroom.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { Message } from '../../message/entities/message.entity';
 
@@ -14,10 +21,13 @@ export class ChatRoom {
   @Column({ default: false })
   estPrivee: boolean;
 
-  @ManyToMany(() => User, user => user.chatRooms)
+  @ManyToMany(() => User, (user) => user.chatRooms, { eager: false })
   @JoinTable()
   utilisateurs: User[];
 
-  @OneToMany(() => Message, message => message.chatRoom)
+  @OneToMany(() => Message, (message) => message.chatRoom, { cascade: true })
   messages: Message[];
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

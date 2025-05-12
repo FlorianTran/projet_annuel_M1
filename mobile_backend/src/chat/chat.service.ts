@@ -1,85 +1,89 @@
-import { Injectable } from '@nestjs/common';
+// src/chat/chat.service.ts (corrigé et complété)
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ChatRoom } from '../chatroom/entities/chatroom.entity';
+import { Repository, In } from 'typeorm';
 import { Message } from '../message/entities/message.entity';
 import { User } from '../user/entities/user.entity';
+import { ChatRoom } from '../chatroom/entities/chatroom.entity';
 
 @Injectable()
 export class ChatService {
   constructor(
-    @InjectRepository(ChatRoom) private chatRoomRepo: Repository<ChatRoom>,
-    @InjectRepository(Message) private messageRepo: Repository<Message>,
-    @InjectRepository(User) private userRepo: Repository<User>
+    @InjectRepository(Message)
+    private readonly messageRepo: Repository<Message>,
+
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
+
+    @InjectRepository(ChatRoom)
+    private readonly chatroomRepo: Repository<ChatRoom>,
   ) {}
 
+  async findMessagesByRoom(roomId: string): Promise<Message[]> {
+    const chatroom = await this.chatroomRepo.findOne({ where: { id: roomId } });
+    if (!chatroom) throw new NotFoundException('Chatroom introuvable');
+
+    return this.messageRepo.find({
+      where: { chatRoom: { id: roomId } },
+      relations: ['user', 'chatRoom'],
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+  async sendMessage(content: string, userId: string, chatroomId: string): Promise<Message> {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Utilisateur introuvable');
+
+    const chatroom = await this.chatroomRepo.findOne({ where: { id: chatroomId } });
+    if (!chatroom) throw new NotFoundException('Chatroom introuvable');
+
+    const message = this.messageRepo.create({ content, user, chatRoom: chatroom });
+    return this.messageRepo.save(message);
+  }
+
   async findOrCreatePrivateRoom(userAId: string, userBId: string): Promise<ChatRoom> {
-    const users = await this.userRepo.findByIds([userAId, userBId]);
-
-    const existing = await this.chatRoomRepo
-      .createQueryBuilder('room')
-      .leftJoinAndSelect('room.utilisateurs', 'user')
-      .where('room.estPrivee = true')
-      .getMany();
-
-    for (const room of existing) {
-      const ids = room.utilisateurs.map(u => u.id).sort();
-      if (ids.includes(userAId) && ids.includes(userBId) && ids.length === 2) return room;
-    }
-
-    const newRoom = this.chatRoomRepo.create({
-      nom: `Privé`,
-      utilisateurs: users,
-      estPrivee: true,
+    let room = await this.chatroomRepo.findOne({
+      where: {
+        estPrivee: true,
+        utilisateurs: In([userAId, userBId]),
+      },
+      relations: ['utilisateurs'],
     });
 
-    return this.chatRoomRepo.save(newRoom);
+    if (!room) {
+      const users = await this.userRepo.find({ where: { id: In([userAId, userBId]) } });
+      room = this.chatroomRepo.create({ nom: 'Privé', estPrivee: true, utilisateurs: users });
+      room = await this.chatroomRepo.save(room);
+    }
+
+    return room;
   }
 
   async createGroupRoom(nom: string, userIds: string[]): Promise<ChatRoom> {
-    const utilisateurs = await this.userRepo.findByIds(userIds);
-    const room = this.chatRoomRepo.create({ nom, utilisateurs, estPrivee: false });
-    return this.chatRoomRepo.save(room);
+    const users = await this.userRepo.find({ where: { id: In(userIds) } });
+    const room = this.chatroomRepo.create({ nom, estPrivee: false, utilisateurs: users });
+    return this.chatroomRepo.save(room);
   }
 
   async addUserToRoom(roomId: string, userId: string): Promise<ChatRoom> {
-    const room = await this.chatRoomRepo.findOne({ where: { id: roomId }, relations: ['utilisateurs'] });
+    const room = await this.chatroomRepo.findOne({ where: { id: roomId }, relations: ['utilisateurs'] });
+    if (!room) throw new NotFoundException('Chatroom introuvable');
+
     const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!room || !user) throw new Error('Room or user not found');
+    if (!user) throw new NotFoundException('Utilisateur introuvable');
 
     room.utilisateurs.push(user);
-    return this.chatRoomRepo.save(room);
+    return this.chatroomRepo.save(room);
   }
 
   async getUserRooms(userId: string): Promise<ChatRoom[]> {
-    return this.chatRoomRepo
-      .createQueryBuilder('room')
-      .leftJoinAndSelect('room.utilisateurs', 'user')
-      .where('user.id = :userId', { userId })
-      .leftJoinAndSelect('room.messages', 'message')
-      .getMany();
+    return this.chatroomRepo.find({
+      where: {},
+      relations: ['utilisateurs'],
+    }).then((rooms) => rooms.filter((r) => r.utilisateurs.some((u) => u.id === userId)));
   }
 
   async getRoomMessages(roomId: string): Promise<Message[]> {
-    return this.messageRepo.find({
-      where: { chatRoom: { id: roomId } },
-      relations: ['expediteur'],
-      order: { dateEnvoi: 'ASC' },
-    });
-  }
-
-  async saveMessage(roomId: string, userId: string, contenu: string): Promise<Message> {
-    const room = await this.chatRoomRepo.findOne({ where: { id: roomId }, relations: ['utilisateurs'] });
-    if (!room) throw new Error('Room not found');
-
-    const isMember = room.utilisateurs.some(u => u.id === userId);
-    if (!isMember) throw new Error('User not authorized in this room');
-
-    const message = this.messageRepo.create({
-      contenu,
-      chatRoom: { id: roomId },
-      expediteur: { id: userId },
-    });
-    return this.messageRepo.save(message);
+    return this.findMessagesByRoom(roomId);
   }
 }

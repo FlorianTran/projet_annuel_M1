@@ -40,7 +40,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket
   ) {
     try {
-      const saved = await this.chatService.saveMessage(
+      const saved = await this.chatService.sendMessage(
         payload.roomId, payload.userId, payload.message);
       this.server.to(payload.roomId).emit('newMessage', saved);
     } catch (err) {

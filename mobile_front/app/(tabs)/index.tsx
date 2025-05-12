@@ -3,10 +3,10 @@ import { View, Text, TextInput, Button, FlatList, StyleSheet, Alert } from 'reac
 import axios from 'axios';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3030'); // adapte selon ton IP réseau local
+const socket = io('http://localhost:3030');
 
 interface RoomManagerScreenProps {
-  userId: string;
+  userId: "b7c4da2a-727d-46ea-9def-4da2a84b6d44";
   onJoinRoom: (roomId: string) => void;
 }
 
@@ -112,3 +112,4 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 });
+
