@@ -32,3 +32,4 @@ export class ChatroomController {
     return this.chatroomService.remove(id);
   }
 }
+

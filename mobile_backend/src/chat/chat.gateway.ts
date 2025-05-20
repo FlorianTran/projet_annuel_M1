@@ -2,49 +2,70 @@ import {
   WebSocketGateway,
   WebSocketServer,
   SubscribeMessage,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
   MessageBody,
   ConnectedSocket,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChatService } from './chat.service';
+import { MessageService } from '../message/message.service';
+import { CreateMessageDto } from '../message/dto/create-message.dto';
+import { Message } from '../message/entities/message.entity';
 
-@WebSocketGateway({ cors: true }) // autorise les connexions cross-origin
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:3000', 'http://localhost:8081'],
+    credentials: true,
+  },
+})
+export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(private chatService: ChatService) {}
+  constructor(private readonly messageService: MessageService) {}
 
   handleConnection(client: Socket) {
-    console.log(`Client connecté : ${client.id}`);
+    console.log(`🟢 Client connecté : ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Client déconnecté : ${client.id}`);
+    console.log(`🔴 Client déconnecté : ${client.id}`);
   }
 
-  // Rejoindre une room
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(@MessageBody() roomId: string, @ConnectedSocket() client: Socket) {
-    client.join(roomId);
-    console.log(`Client ${client.id} a rejoint la room ${roomId}`);
-  }
-
-  // Un utilisateur envoie un message dans une room (privée ou groupe)
   @SubscribeMessage('sendMessage')
   async handleSendMessage(
-    @MessageBody()
-    payload: { roomId: string; userId: string; message: string },
-    @ConnectedSocket() client: Socket
+    @MessageBody() data: CreateMessageDto,
+    @ConnectedSocket() client: Socket,
   ) {
     try {
-      const saved = await this.chatService.sendMessage(
-        payload.roomId, payload.userId, payload.message);
-      this.server.to(payload.roomId).emit('newMessage', saved);
-    } catch (err) {
-      client.emit('errorMessage', err.message);
+      const message: Message = await this.messageService.create(data);
+
+      // Informer les utilisateurs de la room concernée
+      this.server.to(data.chatroomId).emit('newMessage', message);
+    } catch (error) {
+      console.error('Erreur lors de l’envoi du message :', error);
+      client.emit('errorMessage', {
+        message: 'Erreur lors de l’envoi du message',
+        detail: error.message,
+      });
     }
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(
+    @MessageBody() data: { chatroomId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.join(data.chatroomId);
+    console.log(`✅ ${client.id} a rejoint la room ${data.chatroomId}`);
+  }
+
+  @SubscribeMessage('leaveRoom')
+  handleLeaveRoom(
+    @MessageBody() data: { chatroomId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    client.leave(data.chatroomId);
+    console.log(`❌ ${client.id} a quitté la room ${data.chatroomId}`);
   }
 }

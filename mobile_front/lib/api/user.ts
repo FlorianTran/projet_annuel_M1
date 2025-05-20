@@ -1,11 +1,12 @@
+import axios from 'axios';
 import { User } from '../models/user';
 
-const API_URL = 'http://localhost:3000'; // Ton backend local
+const api = axios.create({
+  baseURL: 'http://localhost:3000',
+  timeout: 5000,
+});
 
-export async function fetchUsers(): Promise<User[]> {
-  const response = await fetch(`${API_URL}/users`);
-  if (!response.ok) {
-    throw new Error('Erreur lors de la récupération des utilisateurs');
-  }
-  return response.json();
-}
+export const getUserById = async (id: string): Promise<User> => {
+  const res = await api.get(`/users/${id}`);
+  return res.data as User;
+};

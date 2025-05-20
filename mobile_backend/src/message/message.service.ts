@@ -1,11 +1,11 @@
+// src/message/message.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
-import { ChatRoom } from '../chatroom/entities/chatroom.entity';
 import { User } from '../user/entities/user.entity';
+import { ChatRoom } from '../chatroom/entities/chatroom.entity';
 
 @Injectable()
 export class MessageService {
@@ -33,42 +33,30 @@ export class MessageService {
       chatRoom: chatroom,
     });
 
-    return this.messageRepository.save(message);
+    const saved = await this.messageRepository.save(message);
+
+    const fullMessage = await this.messageRepository.findOne({
+      where: { id: saved.id },
+      relations: ['user', 'chatRoom'],
+    });
+    if (!fullMessage) {
+      throw new NotFoundException(`Message ${saved.id} introuvable`);
+    }
+    return fullMessage;
   }
 
-  findAll(): Promise<Message[]> {
+  async findAll(): Promise<Message[]> {
     return this.messageRepository.find({
       relations: ['user', 'chatRoom'],
-      order: { createdAt: 'DESC' },
+      order: { createdAt: 'ASC' },
     });
   }
 
-  async findOne(id: string): Promise<Message> {
-    const msg = await this.messageRepository.findOne({
-      where: { id },
+  async findByChatRoom(roomId: string): Promise<Message[]> {
+    return this.messageRepository.find({
+      where: { chatRoom: { id: roomId } },
       relations: ['user', 'chatRoom'],
+      order: { createdAt: 'ASC' },
     });
-    if (!msg) throw new NotFoundException(`Message ${id} non trouvé`);
-    return msg;
-  }
-
-  async update(id: string, dto: UpdateMessageDto): Promise<Message> {
-    const message = await this.messageRepository.findOne({
-      where: { id },
-      relations: ['user', 'chatRoom'],
-    });
-
-    if (!message) throw new NotFoundException(`Message ${id} introuvable`);
-
-    message.content = dto.content ?? message.content;
-
-    return this.messageRepository.save(message);
-  }
-
-  async remove(id: string): Promise<void> {
-    const message = await this.messageRepository.findOne({ where: { id } });
-    if (!message) throw new NotFoundException(`Message ${id} introuvable`);
-
-    await this.messageRepository.remove(message);
   }
 }

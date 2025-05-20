@@ -39,13 +39,22 @@ export class ChatroomService {
   }
 
   async findOne(id: string): Promise<ChatRoom> {
+    console.log('📥 Recherche de chatroom avec ID :', id);
+
+    if (!id || typeof id !== 'string') {
+      throw new NotFoundException('ID de chatroom invalide');
+    }
+
     const chatroom = await this.chatroomRepository.findOne({
       where: { id },
       relations: ['utilisateurs', 'messages'],
     });
+
     if (!chatroom) {
+      console.error(`❌ Chatroom avec ID ${id} non trouvée`);
       throw new NotFoundException(`ChatRoom avec ID ${id} non trouvé`);
     }
+
     return chatroom;
   }
 
@@ -72,3 +81,4 @@ export class ChatroomService {
     await this.chatroomRepository.remove(chatroom);
   }
 }
+

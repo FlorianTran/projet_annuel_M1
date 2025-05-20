@@ -51,7 +51,7 @@ import { SocketGateway } from './socket/socket.gateway';
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SocketGateway],
+  providers: [AppService, SocketGateway]
   
 })
 export class AppModule {

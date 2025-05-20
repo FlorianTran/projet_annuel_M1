@@ -17,13 +17,13 @@ export class Message {
   @Column()
   content: string;
 
-  @ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.messages, { eager: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => ChatRoom, chatRoom => chatRoom.messages, { eager: false })  
   chatRoom: ChatRoom;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => User, user => user.messages)
+  @ManyToOne(() => User, user => user.messages, { eager: false })  
   user: User;
 
   @OneToMany(() => Message, message => message.user)
