@@ -18,7 +18,7 @@ import { Message } from '../message/entities/message.entity';
     credentials: true,
   },
 })
-export class MessageGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 

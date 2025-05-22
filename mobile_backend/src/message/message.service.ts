@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { UpdateMessageDto } from './dto/update-message.dto';
 import { User } from '../user/entities/user.entity';
 import { ChatRoom } from '../chatroom/entities/chatroom.entity';
 
@@ -58,5 +59,22 @@ export class MessageService {
       relations: ['user', 'chatRoom'],
       order: { createdAt: 'ASC' },
     });
+  }
+
+  async findOne(id: string): Promise<Message> {
+    const message = await this.messageRepository.findOne({ where: { id } });
+    if (!message) {
+      throw new NotFoundException(`Message ${id} introuvable`);
+    }
+    return message;
+  }
+
+  async update(id: string, dto: UpdateMessageDto): Promise<Message> {
+    await this.messageRepository.update(id, dto);
+    return this.findOne(id);
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.messageRepository.delete(id);
   }
 }
