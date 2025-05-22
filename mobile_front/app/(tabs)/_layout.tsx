@@ -1,45 +1,45 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useUser } from '../context/UserContext';
+import HomeScreen from '../(tabs)/index';
+import Chatrooms from '../(tabs)/chatrooms';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+const Tab = createBottomTabNavigator();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function TabsLayout() {
+  const { user } = useUser();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setIsLoading(false), 50);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    if (!user && !isLoading) {
+      router.replace('/select-user');
+    }
+  }, [user, isLoading]);
+
+  if (!user) return null;
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: true,
+        tabBarIcon: ({ color, size }) => {
+          const iconName = route.name === 'index' ? 'home' : 'chatbubbles';
+          return <Ionicons name={iconName as any} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: 'gray',
+      })}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+      <Tab.Screen name="index" options={{ title: 'Accueil' }} component={HomeScreen} />
+      <Tab.Screen name="chatrooms" options={{ title: 'Salons' }} component={Chatrooms} />
+    </Tab.Navigator>
   );
 }
