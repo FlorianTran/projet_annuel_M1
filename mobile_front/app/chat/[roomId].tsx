@@ -121,7 +121,8 @@ export default function Chat() {
     const date = new Date(dateString);
     if (isToday(date)) return 'Aujourd’hui';
     if (isYesterday(date)) return 'Hier';
-    return format(date, 'dd MMMM yyyy', { locale: fr });
+    return format(date, 'dd MMMM yyyy');
+    // return format(date, 'dd MMMM yyyy', { locale: fr });
   };
 
   const groupedMessages: { date: string; messages: Message[] }[] = [];
