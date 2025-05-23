@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AbonnementModule } from './abonnement/abonnement.module';
 import { Abonnement } from './abonnement/entities/abonnement.entity';
 import { PaiementModule } from './paiement/paiement.module';
+import { Paiement } from './paiement/entities/paiement.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { PaiementModule } from './paiement/paiement.module';
           username: config.get('DATABASE_USER') ?? 'postgres',
           password: config.get('DATABASE_PASSWORD') ?? 'postgres',
           database: config.get('DATABASE_NAME') ?? 'dbpostgres',
-          entities: [User, Abonnement],
+          entities: [User, Abonnement, Paiement],
           synchronize: true,
         };
       },

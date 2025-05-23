@@ -24,7 +24,7 @@ export class Paiement {
   })
   methode: MethodePaiement;
 
-  @ManyToOne(() => Abonnement, (abonnement) => abonnement.paiements, {
+  @ManyToOne(() => Abonnement, (abonnement) => abonnement.paiement, {
     onDelete: 'CASCADE',
   })
   abonnement: Abonnement;
