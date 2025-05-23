@@ -6,12 +6,14 @@ import { DataSource } from 'typeorm';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AbonnementModule } from './abonnement/abonnement.module';
+import { Abonnement } from './abonnement/entities/abonnement.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      ignoreEnvFile: true, // on utilise docker-compose, pas de .env
+      ignoreEnvFile: true, 
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -27,12 +29,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           username: config.get('DATABASE_USER') ?? 'postgres',
           password: config.get('DATABASE_PASSWORD') ?? 'postgres',
           database: config.get('DATABASE_NAME') ?? 'dbpostgres',
-          entities: [User],
+          entities: [User, Abonnement],
           synchronize: true,
         };
       },
     }),
     UserModule,
+    AbonnementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
