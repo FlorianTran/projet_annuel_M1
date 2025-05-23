@@ -4,8 +4,10 @@ import {
     Column,
     ManyToOne,
     JoinColumn,
+    OneToMany,
   } from 'typeorm';
   import { User } from '../../user/entities/user.entity';
+  import { Paiement } from 'src/paiement/entities/paiement.entity';
   
   export enum TypeAbonnement {
     MENSUEL = 'mensuel',
@@ -33,5 +35,10 @@ import {
     @ManyToOne(() => User, (user) => user.abonnements, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'utilisateurId' })
     user: User;
+
+    @OneToMany(() => Paiement, (paiement) => paiement.abonnement)
+    paiements: Paiement[];
+    
+
   }
   

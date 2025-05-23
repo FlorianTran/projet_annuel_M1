@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AbonnementModule } from './abonnement/abonnement.module';
 import { Abonnement } from './abonnement/entities/abonnement.entity';
+import { PaiementModule } from './paiement/paiement.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { Abonnement } from './abonnement/entities/abonnement.entity';
     }),
     UserModule,
     AbonnementModule,
+    PaiementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
