@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Entity, OneToMany, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Abonnement } from 'src/abonnement/entities/abonnement.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid') // UUID comme clé primaire
@@ -29,10 +29,9 @@ export class User {
   @Column('float') // Type float pour la taille
   taille: number;
 
-  // Relations (à ajouter selon les entités associées, par exemple abonnements, séances, etc.)
-  // Exemple :
-  // @OneToMany(() => Abonnement, (abonnement) => abonnement.user)
-  // abonnements: Abonnement[];
+
+  @OneToMany(() => Abonnement, (abonnement) => abonnement.user)
+  abonnements: Abonnement[];
 
   // @OneToMany(() => Seance, (seance) => seance.user)
   // seances: Seance[];
