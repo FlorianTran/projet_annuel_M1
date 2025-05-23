@@ -13,7 +13,7 @@ import { Abonnement } from './abonnement/entities/abonnement.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      ignoreEnvFile: true, // on utilise docker-compose, pas de .env
+      ignoreEnvFile: true, 
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
