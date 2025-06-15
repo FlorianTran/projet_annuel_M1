@@ -8,7 +8,17 @@ describe('ChatroomController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ChatroomController],
-      providers: [ChatroomService],
+      providers: [
+        {
+          provide: ChatroomService,
+          useValue: {
+            create: jest.fn(),
+            findAll: jest.fn(),
+            findOne: jest.fn(),
+            addUser: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<ChatroomController>(ChatroomController);
