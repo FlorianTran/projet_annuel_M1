@@ -37,7 +37,7 @@ import { SocketGateway } from './socket/socket.gateway';
           port: parseInt(config.get('DATABASE_PORT') ?? '5432', 10),
           username: config.get('DATABASE_USER') ?? 'postgres',
           password: config.get('DATABASE_PASSWORD') ?? 'postgres',
-          database: config.get('DATABASE_NAME') ?? 'poctest',
+          database: config.get('DATABASE_NAME') ?? 'dbpostgres',
           entities: [User, Entrainement, Seance, ChatRoom, Message],          
           synchronize: true,
         };
