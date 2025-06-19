@@ -22,7 +22,7 @@ export class Seance {
   @ManyToOne(() => Entrainement, entrainement => entrainement.seances, { nullable: false })
   entrainement: Entrainement;
 
-  @ManyToOne(() => User, user => user.seances, { nullable: false })
+  @ManyToOne(() => User, user => user.seances, { nullable: true })
   utilisateur: User;
 }
 

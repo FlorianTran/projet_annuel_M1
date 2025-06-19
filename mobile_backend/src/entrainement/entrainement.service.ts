@@ -13,16 +13,23 @@ export class EntrainementService {
   ) {}
 
   async create(createEntrainementDto: CreateEntrainementDto) {
-    const entrainement = this.entrainementRepository.create(createEntrainementDto);
+    const entrainement = this.entrainementRepository.create(
+      createEntrainementDto,
+    );
     return this.entrainementRepository.save(entrainement);
   }
 
   async findAll() {
-    return this.entrainementRepository.find({ relations: ['seances'] });
+    return this.entrainementRepository.find({
+      relations: ['seances', 'utilisateur'],
+    });
   }
 
   async findOne(id: string) {
-    return this.entrainementRepository.findOne({ where: { id }, relations: ['seances'] });
+    return this.entrainementRepository.findOne({
+      where: { id },
+      relations: ['seances'],
+    });
   }
 
   async update(id: string, updateEntrainementDto: UpdateEntrainementDto) {
