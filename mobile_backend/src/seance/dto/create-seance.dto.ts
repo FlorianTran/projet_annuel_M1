@@ -1,4 +1,4 @@
-import { IsDateString, IsInt, IsNumber, IsUUID } from 'class-validator';
+import { IsDateString, IsInt, IsNumber, IsOptional, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSeanceDto {
@@ -23,7 +23,7 @@ export class CreateSeanceDto {
   entrainementId: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsUUID()
   utilisateurId: string;
 }
-

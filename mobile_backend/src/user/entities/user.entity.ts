@@ -33,13 +33,13 @@ export class User {
   @Column('float') // Type float pour la taille
   taille: number;
 
-  @ManyToMany(() => ChatRoom, room => room.utilisateurs)
+  @ManyToMany(() => ChatRoom, (room) => room.utilisateurs)
   chatRooms: ChatRoom[];
 
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[];
 
-  @OneToMany(() => Seance, seance => seance.utilisateur)
+  @OneToMany(() => Seance, (seance) => seance.utilisateur)
   seances: Seance[];
 }
 

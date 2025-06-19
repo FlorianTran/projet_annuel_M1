@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../context/UserContext';
 import HomeScreen from '../(tabs)/index';
 import Chatrooms from '../(tabs)/chatrooms';
+import TrackingTab from '../tracking/tracking';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,15 +32,29 @@ export default function TabsLayout() {
       screenOptions={({ route }) => ({
         headerShown: true,
         tabBarIcon: ({ color, size }) => {
-          const iconName = route.name === 'index' ? 'home' : 'chatbubbles';
-          return <Ionicons name={iconName as any} size={size} color={color} />;
+          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+
+          switch (route.name) {
+            case 'index':
+              iconName = 'home';
+              break;
+            case 'Suivis':
+              iconName = 'bar-chart';
+              break;
+            case 'chatrooms':
+              iconName = 'chatbubbles';
+              break;
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: 'gray',
       })}
     >
       <Tab.Screen name="index" options={{ title: 'Accueil' }} component={HomeScreen} />
-      <Tab.Screen name="chatrooms" options={{ title: 'Salons' }} component={Chatrooms} />
+      <Tab.Screen name="Suivis" options={{ title: 'Suivi' }} component={TrackingTab} />
+      <Tab.Screen name="chatrooms" options={{ title: 'Messages' }} component={Chatrooms} />
     </Tab.Navigator>
   );
 }

@@ -70,4 +70,3 @@ export class CreateUserDto {
   @IsNumber()
   taille: number;
 }
-
