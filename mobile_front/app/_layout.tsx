@@ -24,7 +24,9 @@ export default function RootLayout() {
     <UserProvider>
       <ThemeProvider value={DefaultTheme}>
         <Stack>
-          <Stack.Screen name="select-user" options={{ title: 'Select User' }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="debug" options={{ title: 'Debug' }} />
+          <Stack.Screen name="login" options={{ title: 'Connexion' }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="chat/[roomId]" options={{ title: 'Chat' }} />
         </Stack>

@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '@/lib/models/user';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 interface UserContextProps {
   user: User | null;
@@ -18,24 +18,44 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, _setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    console.log('UserContext: Loading stored user');
     const loadStoredUser = async () => {
-      const stored = await AsyncStorage.getItem('user');
-      if (stored) {
-        _setUser(JSON.parse(stored));
+      try {
+        const stored = await AsyncStorage.getItem('user');
+        if (stored) {
+          console.log('UserContext: Found stored user');
+          _setUser(JSON.parse(stored));
+        } else {
+          console.log('UserContext: No stored user found');
+        }
+      } catch (error) {
+        console.error('UserContext: Error loading stored user:', error);
       }
     };
     loadStoredUser();
   }, []);
 
   const setUser = async (user: User) => {
-    await AsyncStorage.setItem('user', JSON.stringify(user));
-    _setUser(user);
+    console.log('UserContext: Setting user', user.id);
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      _setUser(user);
+    } catch (error) {
+      console.error('UserContext: Error setting user:', error);
+    }
   };
 
   const clearUser = async () => {
-    await AsyncStorage.removeItem('user');
-    _setUser(null);
+    console.log('UserContext: Clearing user');
+    try {
+      await AsyncStorage.removeItem('user');
+      _setUser(null);
+    } catch (error) {
+      console.error('UserContext: Error clearing user:', error);
+    }
   };
+
+  console.log('UserContext: Rendering with user:', !!user);
 
   return (
     <UserContext.Provider value={{ user, setUser, clearUser }}>

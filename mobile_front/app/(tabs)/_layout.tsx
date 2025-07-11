@@ -1,10 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import { useUser } from '../context/UserContext';
-import HomeScreen from '../(tabs)/index';
 import Chatrooms from '../(tabs)/chatrooms';
+import HomeScreen from '../(tabs)/index';
+import { useUser } from '../context/UserContext';
 import TrackingTab from '../tracking/tracking';
 
 const Tab = createBottomTabNavigator();
@@ -13,19 +13,36 @@ export default function TabsLayout() {
   const { user } = useUser();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setIsLoading(false), 50);
+    const timeout = setTimeout(() => setIsLoading(false), 100);
     return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
-    if (!user && !isLoading) {
-      router.replace('/select-user');
+    if (!isLoading) {
+      const readyTimeout = setTimeout(() => setIsReady(true), 200);
+      return () => clearTimeout(readyTimeout);
     }
-  }, [user, isLoading]);
+  }, [isLoading]);
 
-  if (!user) return null;
+  useEffect(() => {
+    if (!user && !isLoading && isReady) {
+      console.log('No user found in tabs, redirecting to login');
+      router.replace('/login');
+    }
+  }, [user, isLoading, isReady, router]);
+
+  // Show loading screen while checking authentication
+  if (isLoading || !isReady) {
+    return null;
+  }
+
+  // Don't render tabs if no user
+  if (!user) {
+    return null;
+  }
 
   return (
     <Tab.Navigator
