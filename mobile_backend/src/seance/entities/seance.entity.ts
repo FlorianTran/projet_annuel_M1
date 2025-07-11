@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Entrainement } from '../../entrainement/entities/entrainement.entity';
 import { User } from '../../user/entities/user.entity'; // corrige le chemin selon ton projet
 
@@ -18,6 +18,16 @@ export class Seance {
 
   @Column('int')
   repetitions: number;
+
+  @Column('jsonb', { nullable: true })
+  exercises: {
+    exerciseId: string;
+    name: string;
+    sets: number;
+    reps: number;
+    weight: number;
+    notes?: string;
+  }[];
 
   @ManyToOne(() => Entrainement, entrainement => entrainement.seances, { nullable: false })
   entrainement: Entrainement;

@@ -1,21 +1,26 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from './user/entities/user.entity';
-import { Entrainement } from './entrainement/entities/entrainement.entity';
-import { Seance } from './seance/entities/seance.entity';
-import { UserModule } from './user/user.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { EntrainementModule } from './entrainement/entrainement.module';
-import { SeanceModule } from './seance/seance.module';
-import { ChatroomModule } from './chatroom/chatroom.module';
-import { MessageModule } from './message/message.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { ChatModule } from './chat/chat.module';
+import { ChatroomModule } from './chatroom/chatroom.module';
 import { ChatRoom } from './chatroom/entities/chatroom.entity';
+import { DebugController } from './debug.controller';
+import { Entrainement } from './entrainement/entities/entrainement.entity';
+import { EntrainementModule } from './entrainement/entrainement.module';
+import { Exercise } from './exercise/entities/exercise.entity';
+import { ExerciseModule } from './exercise/exercise.module';
 import { Message } from './message/entities/message.entity';
+import { MessageModule } from './message/message.module';
+import { Seance } from './seance/entities/seance.entity';
+import { SeanceModule } from './seance/seance.module';
 import { SocketGateway } from './socket/socket.gateway';
+import { User } from './user/entities/user.entity';
+import { UserModule } from './user/user.module';
+import { Workout } from './workout/entities/workout.entity';
+import { WorkoutModule } from './workout/workout.module';
 
 
 @Module({
@@ -24,24 +29,15 @@ import { SocketGateway } from './socket/socket.gateway';
       isGlobal: true,
       ignoreEnvFile: true, // on utilise docker-compose, pas de .env
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const host = config.get('DATABASE_HOST');
-        console.log('> DATABASE_HOST (via ConfigService):', host);
-
-        return {
-          type: 'postgres',
-          host: host ?? 'localhost',
-          port: parseInt(config.get('DATABASE_PORT') ?? '5432', 10),
-          username: config.get('DATABASE_USER') ?? 'postgres',
-          password: config.get('DATABASE_PASSWORD') ?? 'postgres',
-          database: config.get('DATABASE_NAME') ?? 'dbpostgres',
-          entities: [User, Entrainement, Seance, ChatRoom, Message],          
-          synchronize: true,
-        };
-      },
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DATABASE_HOST || 'db',
+      port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
+      username: process.env.DATABASE_USER ?? 'postgres',
+      password: process.env.DATABASE_PASSWORD ?? 'postgres',
+      database: process.env.DATABASE_NAME ?? 'dbpostgres',
+      entities: [User, Entrainement, Seance, ChatRoom, Message, Exercise, Workout],          
+      synchronize: true, // Enable auto schema sync for dev
     }),
     UserModule,
     EntrainementModule,
@@ -49,8 +45,10 @@ import { SocketGateway } from './socket/socket.gateway';
     ChatroomModule,
     MessageModule,
     ChatModule,
+    ExerciseModule,
+    WorkoutModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, DebugController],
   providers: [AppService, SocketGateway]
   
 })

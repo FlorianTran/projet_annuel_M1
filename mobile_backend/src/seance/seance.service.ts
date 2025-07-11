@@ -13,11 +13,27 @@ export class SeanceService {
   ) {}
 
   async create(createSeanceDto: CreateSeanceDto) {
+    console.log('=== SEANCE CREATION DEBUG ===');
+    console.log('Received DTO:', JSON.stringify(createSeanceDto, null, 2));
+    console.log('entrainementId:', createSeanceDto.entrainementId);
+    console.log('entrainementId type:', typeof createSeanceDto.entrainementId);
+    console.log('entrainementId is null:', createSeanceDto.entrainementId === null);
+    console.log('entrainementId is undefined:', createSeanceDto.entrainementId === undefined);
+    
+    if (!createSeanceDto.entrainementId) {
+      console.error('❌ entrainementId is missing or null!');
+      throw new Error('entrainementId is required');
+    }
+
     const seance = this.seanceRepository.create({
       ...createSeanceDto,
       entrainement: { id: createSeanceDto.entrainementId },
       utilisateur: { id: createSeanceDto.utilisateurId },
+      exercises: createSeanceDto.exercises ?? [],
     });
+    
+    console.log('Created seance entity:', JSON.stringify(seance, null, 2));
+    
     return this.seanceRepository.save(seance);
   }
 

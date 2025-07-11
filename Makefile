@@ -34,6 +34,34 @@ rebuild:
 restart: down up
 
 # ---------------------------------------------
+# Commandes individuelles pour chaque service
+# ---------------------------------------------
+
+# Démarre uniquement le backend (et ses dépendances)
+up-backend:
+	@docker compose up backend
+
+# Démarre uniquement le frontend (et ses dépendances)
+up-frontend:
+	@docker compose up frontend
+
+# Démarre uniquement la base de données
+up-db:
+	@docker compose up db
+
+# Arrête uniquement le backend
+down-backend:
+	@docker compose stop backend
+
+# Arrête uniquement le frontend
+down-frontend:
+	@docker compose stop frontend
+
+# Arrête uniquement la base de données
+down-db:
+	@docker compose stop db
+
+# ---------------------------------------------
 # Commandes avancées
 # ---------------------------------------------
 

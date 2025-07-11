@@ -21,7 +21,7 @@ export class EntrainementService {
 
   async findAll() {
     return this.entrainementRepository.find({
-      relations: ['seances', 'utilisateur'],
+      relations: ['seances'],
     });
   }
 

@@ -1,5 +1,33 @@
-import { IsDateString, IsInt, IsNumber, IsOptional, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsArray, IsDateString, IsInt, IsNumber, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
+
+export class SeanceExerciseDto {
+  @ApiProperty()
+  @IsUUID()
+  exerciseId: string;
+
+  @ApiProperty()
+  @IsString()
+  name: string;
+
+  @ApiProperty()
+  @IsInt()
+  sets: number;
+
+  @ApiProperty()
+  @IsInt()
+  reps: number;
+
+  @ApiProperty()
+  @IsNumber()
+  weight: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  notes?: string;
+}
 
 export class CreateSeanceDto {
   @ApiProperty()
@@ -26,4 +54,11 @@ export class CreateSeanceDto {
   @IsOptional()
   @IsUUID()
   utilisateurId: string;
+
+  @ApiProperty({ type: [SeanceExerciseDto], required: false })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SeanceExerciseDto)
+  @IsOptional()
+  exercises?: SeanceExerciseDto[];
 }
