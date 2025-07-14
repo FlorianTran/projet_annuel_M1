@@ -1,8 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { OneToMany, ManyToMany } from 'typeorm';
+import { OneToMany, ManyToMany, ManyToOne } from 'typeorm';
 import { Seance } from '../../seance/entities/seance.entity';
 import { Message } from '../../message/entities/message.entity';
 import { ChatRoom } from '../../chatroom/entities/chatroom.entity';
+import { SalleDeSport } from '../../salle-de-sport/entities/salle-de-sport.entity';
 
 @Entity()
 export class User {
@@ -41,6 +42,10 @@ export class User {
 
   @OneToMany(() => Seance, (seance) => seance.utilisateur)
   seances: Seance[];
+
+  @ManyToOne(() => SalleDeSport, (salle) => salle.users)
+  salleDeSport: SalleDeSport;
+
 }
 
 // La page user.entity.ts définit l'entité utilisateur pour votre application NestJS en utilisant TypeORM.

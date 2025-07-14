@@ -21,6 +21,8 @@ import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { Workout } from './workout/entities/workout.entity';
 import { WorkoutModule } from './workout/workout.module';
+import { SalleDeSport } from './salle-de-sport/entities/salle-de-sport.entity';
+import { SalleDeSportModule } from './salle-de-sport/salle-de-sport.module';
 
 
 @Module({
@@ -36,7 +38,7 @@ import { WorkoutModule } from './workout/workout.module';
       username: process.env.DATABASE_USER ?? 'postgres',
       password: process.env.DATABASE_PASSWORD ?? 'postgres',
       database: process.env.DATABASE_NAME ?? 'dbpostgres',
-      entities: [User, Entrainement, Seance, ChatRoom, Message, Exercise, Workout],          
+      entities: [User, Entrainement, Seance, ChatRoom, Message, Exercise, Workout, SalleDeSport],          
       synchronize: true, // Enable auto schema sync for dev
     }),
     UserModule,
@@ -47,6 +49,7 @@ import { WorkoutModule } from './workout/workout.module';
     ChatModule,
     ExerciseModule,
     WorkoutModule,
+    SalleDeSportModule
   ],
   controllers: [AppController, DebugController],
   providers: [AppService, SocketGateway]
