@@ -16,7 +16,7 @@ services:
       - ./mobile_front:/usr/src/app
     environment:
       - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
-    command: npx expo start --tunnel
+    command: npx expo start --lan
 
   backend:
     build:
@@ -24,6 +24,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+      - "3030:3030" # WebSocket via Socket.IO
     depends_on:
       - db
     environment:

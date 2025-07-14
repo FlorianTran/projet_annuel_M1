@@ -1,0 +1,40 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+//import { Abonnement } from '../../abonnement/entities/abonnement.entity'; // corrige selon ton chemin
+import { Seance } from '../../seance/entities/seance.entity';
+
+export enum Niveau {
+  DEBUTANT = 'débutant',
+  INTERMEDIAIRE = 'intermédiaire',
+  AVANCE = 'avancé',
+}
+
+export enum Methodologie {
+  FORCE = 'force',
+  CARDIO = 'cardio',
+  HYPERTROPHIE = 'hypertrophie',
+}
+
+@Entity()
+export class Entrainement {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  titre: string;
+
+  @Column('text')
+  description: string;
+
+  @Column({ type: 'enum', enum: Niveau })
+  niveau: Niveau;
+
+  @Column({ type: 'enum', enum: Methodologie })
+  methodologie: Methodologie;
+
+  // @ManyToOne(() => Abonnement, abonnement => abonnement.entrainements, { nullable: false })
+  // abonnement: Abonnement;
+
+  @OneToMany(() => Seance, seance => seance.entrainement)
+  seances: Seance[];
+}
+

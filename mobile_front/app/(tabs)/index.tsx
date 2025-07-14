@@ -1,17 +1,38 @@
-import { Text, View, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { useUser } from '../context/UserContext';
 
-export default function UserListScreen() {
+export default function HomeScreen() {
+  const { user } = useUser();
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Chargement...</Text>
+      </View>
+    );
+  }
+
   return (
-    <View>
-      <Text style={styles.title}>Hello world les branleurs !</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>
+        Bienvenue, {user.prenom ?? 'utilisateur'}
+      </Text>
+      <Text>Voici votre tableau de bord.</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
   title: {
-    color: 'red',
     fontSize: 24,
-    marginBottom: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
 });

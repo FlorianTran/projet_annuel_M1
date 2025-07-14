@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsDate, IsNumber } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsDate, IsNumber, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -69,5 +69,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsNumber()
   taille: number;
-}
 
+  @IsUUID()
+  salleDeSportId: string;
+}
